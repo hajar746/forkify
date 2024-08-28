@@ -614,11 +614,15 @@ const renderLoader = function(parentEl) {
 const showRecipe = async function() {
     // FETCHING RECIPE USING API ////////////////////////////
     try {
-        renderLoader(recipeContainer);
-        const res = await fetch("https://forkify-api.herokuapp.com/api/v2/recipes/664c8f193e7aa067e94e8a79");
+        // get id of recipe from the search url
+        const id = window.location.hash.slice(1);
+        if (!id) return;
+        renderLoader(recipeContainer); //loader
+        const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(`${data.message} ${res.status}`);
         let { recipe } = data.data;
+        // make recipe object using data
         recipe = {
             id: recipe.id,
             title: recipe.title,
@@ -719,7 +723,11 @@ const showRecipe = async function() {
         alert(err);
     }
 };
-showRecipe();
+// WAY TO LISTEN FOR MORE THAN ONE EVENT, render recipe when hash changes in url / when page loads with hash in url
+[
+    "hashchange",
+    "load"
+].forEach((event)=>window.addEventListener(event, showRecipe));
 
 },{"url:../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ"}],"loVOp":[function(require,module,exports) {
 module.exports = require("9bcc84ee5d265e38").getBundleURL("hWUTQ") + "icons.dfd7a6db.svg" + "?" + Date.now();

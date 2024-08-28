@@ -32,14 +32,19 @@ const renderLoader = function (parentEl) {
 const showRecipe = async function () {
   // FETCHING RECIPE USING API ////////////////////////////
   try {
-    renderLoader(recipeContainer);
+    // get id of recipe from the search url
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    renderLoader(recipeContainer); //loader
+
     const res = await fetch(
-      'https://forkify-api.herokuapp.com/api/v2/recipes/664c8f193e7aa067e94e8a79'
+      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
     );
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} ${res.status}`);
 
     let { recipe } = data.data;
+    // make recipe object using data
     recipe = {
       id: recipe.id,
       title: recipe.title,
@@ -152,4 +157,7 @@ const showRecipe = async function () {
   }
 };
 
-showRecipe();
+// WAY TO LISTEN FOR MORE THAN ONE EVENT, render recipe when hash changes in url / when page loads with hash in url
+['hashchange', 'load'].forEach(event =>
+  window.addEventListener(event, showRecipe)
+);
